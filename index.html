@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كاشير حياة الذكي - النسخة الذهبية V9</title>
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #1e272e; --accent: #ff9f43; --success: #0be881; --danger: #ff5e57; --bg: #f1f2f6; --white: #ffffff; }
+        body { font-family: 'Changa', sans-serif; background-color: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; color: var(--primary); }
+        .main-container { flex: 3; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
+        .header-bar { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .btn-action { padding: 10px 20px; border-radius: 30px; border: none; cursor: pointer; font-family: 'Changa'; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .mic-on { background-color: var(--success); color: white; }
+        .mic-off { background-color: var(--danger); color: white; }
+        .menu-category { margin-bottom: 20px; }
+        .category-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; color: var(--primary); border-bottom: 3px solid var(--accent); display: inline-block; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+        .card { background: var(--white); border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 2px solid transparent; transition: 0.1s; position: relative; cursor: pointer; height: 110px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .card.active { border-color: var(--success); background: #e6fffa; transform: scale(1.05); z-index: 10; }
+        .card i { font-size: 1.5rem; color: var(--accent); margin-bottom: 5px; }
+        .card h3 { font-size: 0.8rem; margin: 3px 0; font-weight: 700; }
+        .card p { font-size: 0.75rem; color: #777; margin: 0; }
+        .card .badge { position: absolute; top: -8px; left: -8px; background: var(--danger); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .sidebar { flex: 1; background: var(--white); display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 320px; }
+        .cart-header { padding: 15px; background: var(--primary); color: white; text-align: center; }
+        .cart-content { flex: 1; padding: 10px; overflow-y: auto; }
+        .item-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f0f0; align-items: center; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .total-section { padding: 20px; background: #fff; border-top: 2px dashed #ccc; }
+        .total-box { display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 900; margin-bottom: 15px; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-family: 'Changa'; font-weight: 700; cursor: pointer; margin-top: 5px; font-size: 1.1rem; }
+        .btn-print { background: var(--success); color: white; box-shadow: 0 4px 15px rgba(11, 232, 129, 0.4); }
+        .voice-bar { position: fixed; bottom: 20px; left: 20px; background: var(--primary); color: white; padding: 10px 25px; border-radius: 50px; display: flex; align-items: center; gap: 15px; font-size: 0.9rem; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .dot { width: 12px; height: 12px; background: #555; border-radius: 50%; }
+        .listening .dot { background: var(--success); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        @media print { body * { display: none !important; } }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="header-bar">
+            <h1><i class="fas fa-utensils"></i> قائمة حياة الذكية</h1>
+            <button id="mic-toggle" class="btn-action mic-on" onclick="toggleMic()">
+                <i id="mic-icon" class="fas fa-microphone"></i>
+                <span id="mic-status-text">المايك: مفعل</span>
+            </button>
+        </div>
+        <div id="full-menu-container"></div>
+    </div>
+
+    <div class="sidebar">
+        <div class="cart-header"><h2 id="order-number-display">طلب رقم: #101</h2></div>
+        <div class="cart-content" id="cart-list-ui"></div>
+        <div class="total-section">
+            <div class="total-box"><span>الإجمالي:</span><span id="total-price-ui">0</span></div>
+            <button class="btn btn-print" onclick="printReceipt()"><i class="fas fa-print"></i> طباعة (توكل)</button>
+            <button class="btn" style="background:#f1f2f6; color:#ff5e57; margin-top:10px;" onclick="clearCart()">تصفير القائمة</button>
+        </div>
+    </div>
+
+    <div class="voice-bar" id="v-bar">
+        <div class="dot"></div><span id="live-text">جاري الاستماع...</span>
+    </div>
+
+<script>
+    // --- 1. بيانات المنيو ---
+    const menuData = [
+        { id: 1, category: "مشويات", name: "كباب شوي", price: 10000, icon: "fa-fire", keys: ["كباب"] },
+        { id: 2, category: "مشويات", name: "تكه لحم", price: 12000, icon: "fa-drumstick-bite", keys: ["تكه لحم", "تكة لحم"] },
+        { id: 3, category: "مشويات", name: "تكه دجاج", price: 9000, icon: "fa-drumstick-bite", keys: ["تكه دجاج", "تكة دجاج"] },
+        { id: 4, category: "مشويات", name: "معلاق", price: 7000, icon: "fa-heart", keys: ["معلاق"] },
+        { id: 5, category: "مشويات", name: "دجاج فحم", price: 12000, icon: "fa-fire-burner", keys: ["دجاج فحم", "دجاجة"] },
+        { id: 6, category: "مشويات", name: "اجنحة", price: 6000, icon: "fa-dove", keys: ["اجنحة"] },
+        { id: 10, category: "سندويشات", name: "همبركر لحم", price: 5000, icon: "fa-burger", keys: ["همبركر لحم", "برجر لحم"] },
+        { id: 11, category: "سندويشات", name: "همبركر دجاج", price: 4000, icon: "fa-burger", keys: ["همبركر دجاج", "برجر دجاج"] },
+        { id: 12, category: "سندويشات", name: "تشيز بركر", price: 6000, icon: "fa-cheese", keys: ["تشيز"] },
+        { id: 13, category: "سندويشات", name: "قص لحم", price: 5000, icon: "fa-layer-group", keys: ["قص لحم"] },
+        { id: 14, category: "سندويشات", name: "قص دجاج", price: 4000, icon: "fa-layer-group", keys: ["قص دجاج"] },
+        { id: 17, category: "سندويشات", name: "بيتزا", price: 12000, icon: "fa-pizza-slice", keys: ["بيتزا"] },
+        { id: 18, category: "سندويشات", name: "فنكر", price: 3000, icon: "fa-french-fries", keys: ["فنكر"] },
+        { id: 70, category: "مشروبات", name: "بيبسي", price: 500, icon: "fa-wine-glass", keys: ["بيبسي"] },
+        { id: 71, category: "مشروبات", name: "سفن اب", price: 500, icon: "fa-wine-bottle", keys: ["سفن"] },
+        { id: 74, category: "مشروبات", name: "ماء", price: 250, icon: "fa-faucet", keys: ["ماء", "مي"] }
+    ];
+
+    let basket = [];
+    let orderId = 101;
+    let isMicActive = true;
+    let processedTokens = new Set();
+
+    // --- 2. إعداد الـ Web Worker ---
+    const myWorker = new Worker('worker.js');
+
+    myWorker.onmessage = function(e) {
+        const response = e.data;
+        if (response.action === 'UPDATE_BASKET') {
+            basket = response.basket;
+            processedTokens = new Set(response.tokens);
+            document.getElementById('live-text').innerText = response.correctedText;
+            renderCart();
+        } else if (response.action === 'PRINT') {
+            if (basket.length > 0) printReceipt();
+        } else if (response.action === 'CLEAR') {
+            clearCart();
+        }
+    };
+
+    // --- 3. إعداد التعرف على الصوت ---
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'ar-IQ';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (e) => {
+        if (!isMicActive) return;
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+            let transcript = e.results[i][0].transcript;
+            
+            // إرسال البيانات للعامل للمعالجة
+            myWorker.postMessage({
+                transcript: transcript,
+                menuData: menuData,
+                currentBasket: basket,
+                processedTokens: Array.from(processedTokens)
+            });
+
+            if (e.results[i].isFinal) processedTokens.clear();
+        }
+    };
+
+    // --- 4. دوال واجهة المستخدم ---
+    function renderMenu() {
+        const container = document.getElementById('full-menu-container');
+        const categories = [...new Set(menuData.map(item => item.category))];
+        let html = "";
+        categories.forEach(cat => {
+            const items = menuData.filter(i => i.category === cat);
+            html += `<div class="menu-category"><div class="category-title">${cat}</div><div class="menu-grid">`;
+            items.forEach(item => {
+                html += `<div class="card" data-id="${item.id}" onclick="addToBasket(${item.id})">
+                    <div class="badge" style="display:none">0</div>
+                    <i class="fas ${item.icon}"></i><h3>${item.name}</h3><p>${item.price.toLocaleString()}</p>
+                </div>`;
+            });
+            html += `</div></div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function addToBasket(id) {
+        const item = menuData.find(m => m.id === id);
+        const exists = basket.find(b => b.id === id);
+        if (exists) exists.qty++; else basket.push({ ...item, qty: 1 });
+        renderCart();
+        // تحديث قاعدة البيانات يدوياً عند الضغط باليد
+        myWorker.postMessage({ action: 'SAVE_MANUAL', basket: basket });
+    }
+
+    function renderCart() {
+        const listUI = document.getElementById('cart-list-ui');
+        if (basket.length === 0) {
+            listUI.innerHTML = `<div style="text-align:center; color:#999; margin-top:50px;"><i class="fas fa-basket-shopping" style="font-size:3rem; margin-bottom:10px;"></i><p>القائمة فارغة<br>تحدث لإضافة طلب</p></div>`;
+            document.getElementById('total-price-ui').innerText = "0";
+            document.querySelectorAll('.card').forEach(c => { c.classList.remove('active'); c.querySelector('.badge').style.display = 'none'; });
+            return;
+        }
+
+        let total = 0;
+        let html = "";
+        basket.forEach(item => {
+            total += (item.price * item.qty);
+            html += `<div class="item-row">
+                <div>${item.name} <span style="font-size:0.8em; color:#666">x${item.qty}</span></div>
+                <div style="font-weight:bold">${(item.price * item.qty).toLocaleString()}</div>
+            </div>`;
+        });
+        listUI.innerHTML = html;
+        document.getElementById('total-price-ui').innerText = total.toLocaleString() + " د.ع";
+
+        document.querySelectorAll('.card').forEach(card => {
+            const item = basket.find(b => b.id == card.dataset.id);
+            const badge = card.querySelector('.badge');
+            if (item) {
+                card.classList.add('active');
+                badge.innerText = item.qty;
+                badge.style.display = "flex";
+            } else {
+                card.classList.remove('active');
+                badge.style.display = "none";
+            }
+        });
+    }
+
+    function printReceipt() {
+        window.print();
+        orderId++;
+        document.getElementById('order-number-display').innerText = "طلب رقم: #" + orderId;
+        clearCart();
+    }
+
+    function clearCart() { 
+        basket = []; 
+        renderCart(); 
+        processedTokens.clear();
+        // طلب المسح من IndexedDB
+        const request = indexedDB.open("HayatCashierDB", 1);
+        request.onsuccess = (e) => {
+            e.target.result.transaction(["orders"], "readwrite").objectStore("orders").delete("current_active_order");
+        };
+    }
+
+    function toggleMic() {
+        isMicActive = !isMicActive;
+        const btn = document.getElementById('mic-toggle');
+        if (isMicActive) {
+            recognition.start();
+            btn.className = "btn-action mic-on";
+            btn.innerHTML = '<i class="fas fa-microphone"></i> <span>المايك: مفعل</span>';
+        } else {
+            recognition.stop();
+            btn.className = "btn-action mic-off";
+            btn.innerHTML = '<i class="fas fa-microphone-slash"></i> <span>المايك: متوقف</span>';
+        }
+    }
+
+    // استعادة البيانات عند الفتح
+    window.onload = () => { 
+        renderMenu(); 
+        recognition.start(); 
+        const request = indexedDB.open("HayatCashierDB", 1);
+        request.onsuccess = (e) => {
+            const store = e.target.result.transaction(["orders"], "readonly").objectStore("orders");
+            const getReq = store.get("current_active_order");
+            getReq.onsuccess = () => {
+                if (getReq.result) { basket = getReq.result.items; renderCart(); }
+            };
+        };
+    };
+    recognition.onend = () => { if (isMicActive) recognition.start(); };
+</script>
+</body>
+</html>
