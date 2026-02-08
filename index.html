@@ -19,90 +19,65 @@
         }
         
         body { font-family: 'Changa', sans-serif; background-color: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; color: var(--primary); }
-        
         .main-container { flex: 3; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
-        
-        .header-bar { 
-            margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; 
-            background: white; padding: 12px 25px; border-radius: 15px; box-shadow: var(--card-shadow); 
-        }
-
+        .header-bar { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px 25px; border-radius: 15px; box-shadow: var(--card-shadow); }
         .btn-action { padding: 10px 20px; border-radius: 30px; border: none; cursor: pointer; font-family: 'Changa'; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
         .mic-on { background-color: var(--success); color: white; box-shadow: 0 4px 12px rgba(11, 232, 129, 0.3); }
         .mic-off { background-color: var(--danger); color: white; }
-        
         .menu-category { margin-bottom: 25px; }
-        .category-title { 
-            font-size: 1.3rem; font-weight: 800; margin-bottom: 15px; color: var(--primary); 
-            padding-right: 15px; border-right: 5px solid var(--accent);
-        }
-        
+        .category-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 15px; color: var(--primary); padding-right: 15px; border-right: 5px solid var(--accent); }
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
-        
-        .card { 
-            background: var(--white); border-radius: 18px; padding: 15px; text-align: center; 
-            box-shadow: var(--card-shadow); border: 2px solid transparent; transition: var(--transition); 
-            position: relative; cursor: pointer; height: 140px; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; overflow: hidden;
-        }
-        
+        .card { background: var(--white); border-radius: 18px; padding: 15px; text-align: center; box-shadow: var(--card-shadow); border: 2px solid transparent; transition: var(--transition); position: relative; cursor: pointer; height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-        
-        .card.active { 
-            border-color: var(--success); background: linear-gradient(145deg, #ffffff, #e6fffa); 
-            transform: scale(1.02);
-        }
-
-        .card i { 
-            font-size: 2rem; color: var(--accent); margin-bottom: 10px; 
-            transition: var(--transition); 
-        }
-        
+        .card.active { border-color: var(--success); background: linear-gradient(145deg, #ffffff, #e6fffa); transform: scale(1.02); }
+        .card i { font-size: 2rem; color: var(--accent); margin-bottom: 10px; transition: var(--transition); }
         .card.active i { color: var(--success); transform: scale(1.1); }
-        
         .card h3 { font-size: 0.95rem; margin: 5px 0; font-weight: 700; color: var(--primary); }
         .card p { font-size: 0.85rem; color: var(--success); font-weight: 600; margin: 0; }
-        
-        .card .badge { 
-            position: absolute; top: 10px; right: 10px; background: var(--danger); 
-            color: white; width: 26px; height: 26px; border-radius: 8px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; font-size: 0.85rem; animation: popIn 0.3s ease;
-        }
-
+        .card .badge { position: absolute; top: 10px; right: 10px; background: var(--danger); color: white; width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; animation: popIn 0.3s ease; }
         @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-        
         .sidebar { flex: 1; background: var(--white); display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 340px; }
         .cart-header { padding: 20px; background: var(--primary); color: white; text-align: center; border-bottom: 4px solid var(--accent); }
         .cart-content { flex: 1; padding: 15px; overflow-y: auto; }
-        
-        .item-row { 
-            display: flex; justify-content: space-between; padding: 12px; 
-            background: #f8f9fa; border-radius: 10px; margin-bottom: 8px;
-            align-items: center; animation: slideIn 0.3s ease; 
-        }
-        
+        .item-row { display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; border-radius: 10px; margin-bottom: 8px; align-items: center; animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        
         .total-section { padding: 20px; background: #fff; border-top: 2px dashed #ccc; }
         .total-box { display: flex; justify-content: space-between; font-size: 1.6rem; font-weight: 900; margin-bottom: 15px; color: var(--primary); }
-        
         .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-family: 'Changa'; font-weight: 700; cursor: pointer; margin-top: 8px; font-size: 1.1rem; transition: var(--transition); }
         .btn-print { background: var(--success); color: white; box-shadow: 0 6px 20px rgba(11, 232, 129, 0.4); }
-        
-        .voice-bar { 
-            position: fixed; bottom: 25px; left: 25px; background: rgba(30, 39, 46, 0.95); 
-            backdrop-filter: blur(10px); color: white; padding: 12px 30px; border-radius: 50px; 
-            display: flex; align-items: center; gap: 15px; font-size: 0.9rem; z-index: 1000; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-        }
-        
+        .voice-bar { position: fixed; bottom: 25px; left: 25px; background: rgba(30, 39, 46, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px 30px; border-radius: 50px; display: flex; align-items: center; gap: 15px; font-size: 0.9rem; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); }
         .dot { width: 12px; height: 12px; background: #555; border-radius: 50%; transition: 0.3s; }
         .mic-on-active .dot { background: var(--success); animation: pulse 1s infinite; }
-        
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(11, 232, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(11, 232, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(11, 232, 129, 0); } }
-        
-        @media print { body * { display: none !important; } }
+
+        /* --- تنسيق الفاتورة الحرارية المطلوب --- */
+        #printable-receipt { 
+            display: none; 
+            width: 80mm; 
+            padding: 5mm; 
+            color: #000; 
+            background: #fff; 
+            box-sizing: border-box; 
+            direction: rtl; 
+            font-family: 'Changa', sans-serif;
+        }
+        .receipt-header h2 { margin: 5px 0; font-size: 20px; text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px; }
+        .receipt-info { display: flex; justify-content: space-between; font-size: 11px; margin: 10px 0; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        .receipt-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .receipt-table th, .receipt-table td { border: 1px solid #000; padding: 6px 2px; font-size: 11px; text-align: center; font-weight: bold; word-wrap: break-word; }
+        .col-id { width: 10%; }
+        .col-name { width: 40%; text-align: right !important; padding-right: 3px !important; }
+        .col-qty { width: 10%; }
+        .col-price { width: 20%; }
+        .col-total { width: 20%; }
+        .total-final { font-size: 17px; font-weight: 900; padding: 10px; border: 2px solid #000; text-align: center; margin-top: 10px; }
+        .footer-msg { font-size: 11px; text-align: center; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold; }
+
+        @media print {
+            body > *:not(#printable-receipt) { display: none !important; }
+            #printable-receipt { display: block !important; width: 100% !important; position: absolute; top: 0; right: 0; }
+            @page { size: 80mm auto; margin: 0; }
+        }
     </style>
 </head>
 <body>
@@ -136,6 +111,28 @@
 
     <div class="voice-bar" id="v-bar">
         <div class="dot"></div><span id="live-text">جاري الاستماع للذكاء...</span>
+    </div>
+
+    <div id="printable-receipt">
+        <div class="receipt-header"><h2>كاشير حياة الذكي</h2></div>
+        <div class="receipt-info">
+            <span>طلب: <span id="p-order-id"></span></span>
+            <span><span id="p-time"></span> | <span id="p-date"></span></span>
+        </div>
+        <table class="receipt-table">
+            <thead>
+                <tr>
+                    <th class="col-id">ت</th>
+                    <th class="col-name">المادة</th>
+                    <th class="col-qty">ك</th>
+                    <th class="col-price">سعر</th>
+                    <th class="col-total">مجموع</th>
+                </tr>
+            </thead>
+            <tbody id="p-items"></tbody>
+        </table>
+        <div class="total-final">الإجمالي: <span id="p-total">0</span></div>
+        <div class="footer-msg">شكراً لزيارتكم - نتمى لكم يوماً سعيداً</div>
     </div>
 
 <script>
@@ -211,28 +208,12 @@
         { id: 75, category: "مشروبات", name: "شاي", price: 500, icon: "fa-mug-hot", keys: ["شاي", "جاي"] }
     ];
 
-    let basket = []; let orderId = 101; let isMicActive = true; let processedTokens = new Set();
-    
-    // --- وظيفة تفريغ ذاكرة المتصفح كل دقيقتين لمنع التهنيك ---
-    function forceMemoryCleanup() {
-        console.log("جارِ تنظيف ذاكرة الكاشير...");
-        processedTokens.clear(); // مسح سجل التعرف الصوتي القديم
-        
-        // حذف العناصر غير المرئية من الـ DOM لتحرير الرام
-        const listUI = document.getElementById('cart-list-ui');
-        if (basket.length === 0) { listUI.innerHTML = ""; renderCart(); }
-        
-        // تحفيز المتصفح على تحرير الذاكرة عبر Nulling
-        let tempCollector = null;
-        
-        document.getElementById('mem-status').innerText = "تم تحسين الذاكرة تلقائياً: " + new Date().toLocaleTimeString();
-        setTimeout(() => { document.getElementById('mem-status').innerText = ""; }, 5000);
-    }
-    
-    // ضبط المؤقت لتشغيل التنظيف كل دقيقتين (120000 مللي ثانية)
-    setInterval(forceMemoryCleanup, 120000);
+    let basket = []; 
+    let orderId = localStorage.getItem('lastOrderId') ? parseInt(localStorage.getItem('lastOrderId')) : 101; 
+    let isMicActive = true; 
+    let processedTokens = new Set();
 
-    const wordToNum = { "واحد": 1, "وحده": 1, "طنين": 2, "اثنين": 2, "ثنين": 2, "ثلاثه": 3, "تلاثه": 3, "اربعه": 4, "خمسه": 5, "سته": 6, "سبعه": 7, "ثمانيه": 8, "تسعه": 9, "عشره": 10 };
+    const wordToNum = { "واحد": 1, "وحده": 1, "طنين": 2, "اثنين": 2, "ثنين": 2, "ثلاثه": 3, "تلاثه": 3, "اربعه": 4,"اربع": 4 ,"خمسه": 5, "سته": 6, "سبعه": 7, "ثمانيه": 8,"ثماءنيه": 8, "تسعه": 9, "عشره": 10 };
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
@@ -266,29 +247,34 @@
 
         menuData.forEach(item => {
             const foundKey = item.keys.find(key => text.includes(key));
-            const tokenKey = item.id + "_" + foundKey + "_" + (isDelete ? "DEL" : "ADD");
-
-            if (foundKey && !processedTokens.has(tokenKey)) {
-                if (isDelete) {
-                    const idx = basket.findIndex(b => b.id === item.id);
-                    if (idx > -1) basket.splice(idx, 1);
-                } else {
-                    let qty = findNumberInText(text);
-                    const idx = basket.findIndex(b => b.id === item.id);
-                    if (idx > -1) basket[idx].qty = qty;
-                    else basket.push({ ...item, qty: qty });
+            if (foundKey) {
+                const tokenKey = item.id + "_" + foundKey + "_" + (isDelete ? "DEL" : "ADD");
+                if (!processedTokens.has(tokenKey)) {
+                    if (isDelete) {
+                        const idx = basket.findIndex(b => b.id === item.id);
+                        if (idx > -1) basket.splice(idx, 1);
+                    } else {
+                        let qty = findNumberNearKeyword(text, foundKey);
+                        const idx = basket.findIndex(b => b.id === item.id);
+                        if (idx > -1) basket[idx].qty = qty;
+                        else basket.push({ ...item, qty: qty });
+                    }
+                    processedTokens.add(tokenKey);
+                    renderCart();
                 }
-                processedTokens.add(tokenKey);
-                renderCart();
             }
         });
     }
 
-    function findNumberInText(text) {
-        let match = text.match(/\d+/);
-        if (match) return parseInt(match[0]);
+    function findNumberNearKeyword(text, keyword) {
         let words = text.split(/\s+/);
-        for (let word of words) { if (wordToNum[word]) return wordToNum[word]; }
+        let keyIdx = words.indexOf(keyword);
+        let potentialNumbers = [words[keyIdx-1], words[keyIdx+1]];
+        for (let num of potentialNumbers) {
+            if (!num) continue;
+            if (num.match(/\d+/)) return parseInt(num);
+            if (wordToNum[num]) return wordToNum[num];
+        }
         return 1;
     }
 
@@ -352,10 +338,36 @@
     }
 
     function printReceipt() {
+        if (basket.length === 0) return;
+        const now = new Date();
+        document.getElementById('p-date').innerText = now.toLocaleDateString('ar-IQ');
+        document.getElementById('p-time').innerText = now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('p-order-id').innerText = "#" + orderId;
+        
+        let itemsHtml = "";
+        let total = 0;
+        basket.forEach((item, index) => {
+            let itemTotal = item.price * item.qty;
+            total += itemTotal;
+            itemsHtml += `<tr>
+                <td class="col-id">${index + 1}</td>
+                <td class="col-name">${item.name}</td>
+                <td class="col-qty">${item.qty}</td>
+                <td class="col-price">${item.price.toLocaleString()}</td>
+                <td class="col-total">${itemTotal.toLocaleString()}</td>
+            </tr>`;
+        });
+        document.getElementById('p-items').innerHTML = itemsHtml;
+        document.getElementById('p-total').innerText = total.toLocaleString() + " د.ع";
+
         window.print();
+        
         orderId++;
-        document.getElementById('order-number-display').innerText = "طلب رقم: #" + orderId;
-        clearCart();
+        localStorage.setItem('lastOrderId', orderId);
+        setTimeout(() => {
+            clearCart();
+            location.reload();
+        }, 1000);
     }
 
     function clearCart() { basket = []; renderCart(); processedTokens.clear(); }
@@ -377,7 +389,11 @@
         }
     }
 
-    window.onload = () => { renderMenu(); try { recognition.start(); } catch(e) {} };
+    window.onload = () => { 
+        document.getElementById('order-number-display').innerText = "طلب رقم: #" + orderId;
+        renderMenu(); 
+        try { recognition.start(); } catch(e) {} 
+    };
     recognition.onend = () => { if (isMicActive) try { recognition.start(); } catch(e) {} };
 </script>
 </body>
