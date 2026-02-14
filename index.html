@@ -2,99 +2,520 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>نظام صيدلية حياة - إصدار Gemini 2.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كاشير حياة الذكي - النسخة الذهبية V9.2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #4834d4; --success: #2ecc71; --bg: #f4f7f6; }
-        body { font-family: 'Changa', sans-serif; background: var(--bg); margin: 0; text-align: center; }
-        .container { padding: 40px; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: inline-block; min-width: 350px; }
-        .btn { background: var(--primary); color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.1rem; font-family: 'Changa'; }
-        #loader { display: none; margin-top: 20px; color: var(--primary); font-weight: bold; }
-        table { width: 100%; margin-top: 30px; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
-        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: center; }
-        th { background: var(--primary); color: white; }
+        :root { 
+            --primary: #1e272e; 
+            --accent: #ff9f43; 
+            --success: #0be881; 
+            --danger: #ff5e57; 
+            --bg: #f1f2f6; 
+            --white: #ffffff;
+            --toters: #00d2d3;
+            --talabat: #ff5e57;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        body { font-family: 'Changa', sans-serif; background-color: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; color: var(--primary); }
+        .main-container { flex: 3; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; }
+        .header-bar { margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px 25px; border-radius: 15px; box-shadow: var(--card-shadow); }
+        .btn-action { padding: 10px 20px; border-radius: 30px; border: none; cursor: pointer; font-family: 'Changa'; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
+        .mic-on { background-color: var(--success); color: white; box-shadow: 0 4px 12px rgba(11, 232, 129, 0.3); }
+        .mic-off { background-color: var(--danger); color: white; }
+        .menu-category { margin-bottom: 25px; }
+        .category-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 15px; color: var(--primary); padding-right: 15px; border-right: 5px solid var(--accent); }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+        .card { background: var(--white); border-radius: 18px; padding: 15px; text-align: center; box-shadow: var(--card-shadow); border: 2px solid transparent; transition: var(--transition); position: relative; cursor: pointer; height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .card.active { border-color: var(--success); background: linear-gradient(145deg, #ffffff, #e6fffa); transform: scale(1.02); }
+        .card i { font-size: 2rem; color: var(--accent); margin-bottom: 10px; transition: var(--transition); }
+        .card.active i { color: var(--success); transform: scale(1.1); }
+        .card h3 { font-size: 0.95rem; margin: 5px 0; font-weight: 700; color: var(--primary); }
+        .card p { font-size: 0.85rem; color: var(--success); font-weight: 600; margin: 0; }
+        .card .badge { position: absolute; top: 10px; right: 10px; background: var(--danger); color: white; width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; animation: popIn 0.3s ease; }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .sidebar { flex: 1; background: var(--white); display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 340px; }
+        .cart-header { padding: 20px; background: var(--primary); color: white; text-align: center; border-bottom: 4px solid var(--accent); }
+        .cart-content { flex: 1; padding: 15px; overflow-y: auto; }
+        .item-row { display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; border-radius: 10px; margin-bottom: 8px; align-items: center; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        .order-options { padding: 10px 15px; background: #f8f9fa; border-bottom: 1px solid #eee; }
+        .type-selector { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+        .type-btn { flex: 1; padding: 8px 5px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-family: 'Changa'; font-weight: bold; transition: 0.3s; font-size: 0.8rem; }
+        .type-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .type-btn.toters.active { background: var(--toters); border-color: var(--toters); }
+        .type-btn.talabat.active { background: var(--talabat); border-color: var(--talabat); }
+        
+        .notes-input { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Changa'; box-sizing: border-box; }
+
+        .total-section { padding: 20px; background: #fff; border-top: 2px dashed #ccc; }
+        .total-box { display: flex; justify-content: space-between; font-size: 1.6rem; font-weight: 900; margin-bottom: 5px; color: var(--primary); }
+        .profit-box { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--success); font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-family: 'Changa'; font-weight: 700; cursor: pointer; margin-top: 8px; font-size: 1.1rem; transition: var(--transition); }
+        .btn-print { background: var(--success); color: white; box-shadow: 0 6px 20px rgba(11, 232, 129, 0.4); }
+        .voice-bar { position: fixed; bottom: 25px; left: 25px; background: rgba(30, 39, 46, 0.95); backdrop-filter: blur(10px); color: white; padding: 12px 30px; border-radius: 50px; display: flex; align-items: center; gap: 15px; font-size: 0.9rem; z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); }
+        .dot { width: 12px; height: 12px; background: #555; border-radius: 50%; transition: 0.3s; }
+        .mic-on-active .dot { background: var(--success); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(11, 232, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(11, 232, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(11, 232, 129, 0); } }
+
+        #printable-receipt { 
+            display: none; 
+            width: 80mm; 
+            padding: 5mm; 
+            color: #000; 
+            background: #fff; 
+            box-sizing: border-box; 
+            direction: rtl; 
+            font-family: 'Changa', sans-serif;
+        }
+        .receipt-header h2 { margin: 5px 0; font-size: 20px; text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px; }
+        .receipt-info { display: flex; justify-content: space-between; font-size: 11px; margin: 10px 0; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        .receipt-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .receipt-table th, .receipt-table td { border: 1px solid #000; padding: 6px 2px; font-size: 11px; text-align: center; font-weight: bold; word-wrap: break-word; }
+        .col-id { width: 10%; }
+        .col-name { width: 30%; text-align: right !important; padding-right: 3px !important; }
+        .col-qty { width: 20%; }
+        .col-price { width: 20%; }
+        .col-total { width: 20%; }
+        .total-final { font-size: 17px; font-weight: 900; padding: 10px; border: 2px solid #000; text-align: center; margin-top: 10px; }
+        .receipt-notes { margin-top: 10px; font-size: 12px; border: 1px solid #000; padding: 5px; }
+        .footer-msg { font-size: 11px; text-align: center; margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold; }
+
+        @media print {
+            body > *:not(#printable-receipt) { display: none !important; }
+            #printable-receipt { display: block !important; width: 100% !important; position: absolute; top: 0; right: 0; }
+            @page { size: 80mm auto; margin: 0; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card">
-        <h2><i class="fas fa-robot"></i> صيدلية حياة - تحليل ذكي</h2>
-        <p>ارفع فاتورة المذخر ليقوم <b>Gemini 2.0 Flash</b> بمعالجتها</p>
-        <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="analyzeInvoice(this)">
-        <button class="btn" onclick="document.getElementById('imageInput').click()">اختر صورة الفاتورة</button>
-        <div id="loader">⏳ جاري التحليل باستخدام Gemini 2.0...</div>
+    <div class="main-container">
+        <div class="header-bar">
+            <h1><i class="fas fa-robot" style="color:var(--accent)"></i> الكاشير الذكي <small style="font-size: 0.5em; opacity: 0.6;">V9.2</small></h1>
+            <button id="mic-toggle" class="btn-action mic-on" onclick="toggleMic()">
+                <i id="mic-icon" class="fas fa-microphone"></i>
+                <span id="mic-status-text">المايك: مفعل</span>
+            </button>
+        </div>
+        <div id="full-menu-container"></div>
     </div>
 
-    <table id="resultTable" style="display:none">
-        <thead>
-            <tr><th>اسم الدواء</th><th>الكمية</th><th>السعر</th></tr>
-        </thead>
-        <tbody id="inventoryBody"></tbody>
-    </table>
-</div>
+    <div class="sidebar">
+        <div class="cart-header"><h2 id="order-number-display">طلب رقم: #101</h2></div>
+        
+        <div class="order-options">
+            <div class="type-selector">
+                <button id="btn-dinein" class="type-btn active" onclick="setOrderType('صاله')">صاله</button>
+                <button id="btn-takeaway" class="type-btn" onclick="setOrderType('سفري')">سفري</button>
+                <button id="btn-toters" class="type-btn toters" onclick="setOrderType('توترز')">توترز</button>
+                <button id="btn-talabat" class="type-btn talabat" onclick="setOrderType('طلبات')">طلبات</button>
+            </div>
+            <input type="text" id="order-notes" class="notes-input" placeholder="أضف ملاحظات الزبون هنا...">
+        </div>
 
-<script type="module">
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        <div class="cart-content" id="cart-list-ui">
+            <div style="text-align:center; color:#999; margin-top:50px;">
+                <i class="fas fa-brain" style="font-size:3rem; margin-bottom:15px; opacity: 0.2;"></i>
+                <p>النظام بانتظار أوامرك الصوتية...</p>
+            </div>
+        </div>
+        <div class="total-section">
+            <div id="mem-status" style="text-align: center; font-size: 0.6rem; color: #aaa; margin-bottom: 5px;"></div>
+            <div id="profit-display" class="profit-box" style="display:none;">
+                <span>صافي الربح (بعد استقطاع 15%):</span>
+                <span id="profit-value">0</span>
+            </div>
+            <div class="total-box"><span>الإجمالي:</span><span id="total-price-ui">0</span></div>
+            <button class="btn btn-print" onclick="printReceipt()"><i class="fas fa-check-circle"></i> طباعة</button>
+            <button class="btn" style="background:#f1f2f6; color:#ff5e57;" onclick="clearCart()">تصفير القائمة</button>
+        </div>
+    </div>
 
-    // مفتاحك الذي قمت بتجربته بنجاح
-    const API_KEY = "AIzaSyCZ7lb3L4WUXTTUCUUS4t5hpjvuu8TR7Fk";
-    const genAI = new GoogleGenerativeAI(API_KEY);
+    <div class="voice-bar" id="v-bar">
+        <div class="dot"></div><span id="live-text">جاري الاستماع لصوتك...</span>
+    </div>
 
-    window.analyzeInvoice = async (input) => {
-        const file = input.files[0];
-        if (!file) return;
+    <div id="printable-receipt">
+        <div class="receipt-header"><h2>كاشير حياة الذكي</h2></div>
+        <div class="receipt-info">
+            <span>طلب: <span id="p-order-id"></span> (<span id="p-order-type">صاله</span>)</span>
+            <span><span id="p-time"></span> | <span id="p-date"></span></span>
+        </div>
+        <table class="receipt-table">
+            <thead>
+                <tr>
+                    <th class="col-id">ت</th>
+                    <th class="col-name">المادة</th>
+                    <th class="col-qty">كمية</th>
+                    <th class="col-price">سعر</th>
+                    <th class="col-total">مجموع</th>
+                </tr>
+            </thead>
+            <tbody id="p-items"></tbody>
+        </table>
+        <div class="total-final">الإجمالي: <span id="p-total">0</span></div>
+        <div id="p-notes-area" class="receipt-notes" style="display:none">
+            <b>ملاحظات:</b> <span id="p-notes"></span>
+        </div>
+        <div class="footer-msg">شكراً لزيارتكم - نتمى لكم يوماً سعيداً</div>
+    </div>
 
-        document.getElementById('loader').style.display = 'block';
-        document.getElementById('resultTable').style.display = 'none';
-
-        try {
-            const base64 = await toBase64(file);
-            
-            // استدعاء موديل 2.0 فلاش كما في الـ Curl الخاص بك
-            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-            const prompt = "Extract medicines from this invoice. Return ONLY a JSON array of objects: [{\"name\":\"string\", \"qty\":number, \"price\":number}]. No conversational text.";
-
-            const result = await model.generateContent([
-                { inlineData: { data: base64.split(',')[1], mimeType: file.type } },
-                { text: prompt }
-            ]);
-
-            const response = await result.response;
-            const text = response.text();
-            
-            // استخراج الـ JSON وتنظيفه
-            const jsonStr = text.substring(text.indexOf('['), text.lastIndexOf(']') + 1);
-            const data = JSON.parse(jsonStr);
-
-            renderData(data);
-        } catch (error) {
-            console.error(error);
-            alert("حدث خطأ أثناء التحليل. تأكد من وضوح الصورة.");
-        } finally {
-            document.getElementById('loader').style.display = 'none';
-        }
+<script>
+    const voiceCorrections = {
+        "سنجر": "فينجر", "فنجر": "فنكر", "بتيته": "فنكر", "فنكركر": "فنكر", "اصابع": "فنكر",
+        "برجر": "بركر", "بركر": "بركر لحم",
+        "بيت لحم": "ستيك لحم", "تيك لحم": "ستيك لحم", "استيك": "ستيك", "ستيج": "ستيك",
+        "فيزا": "بيتزا", "بيزا": "بيتزا", "بيدزا": "بيتزا",
+        "سفينة": "سفن", "سفينه": "سفن", "7 اب": "سفن",
+        "ببسي": "بيبسي", "بيسي": "بيبسي", "تبسي": "بيبسي",
+        "كولا": "كوكا", "كوكاكولا": "كوكا",
+        "شنينة": "لبن", "شنينه": "لبن", "رائب": "لبن",
+        "ماء": "ماء", "ماي": "ماء", "مي": "ماء",
+        "دقه": "تكه", "تكي": "تكه لحم",
+        "معلاك": "معلاق", "معلق": "معلاق",
+        "اجنحه": "اجنحة",
+        "قصدي دجاج": "قص دجاج", "كص دجاج": "قص دجاج",
+        "جيز": "تشيز", "شيز": "تشيز",
+        "ساج": "صاج",
+        "فاهيت": "فاهيتا", "فاهيته": "فاهيتا",
+        "غوزي": "قوزي", "جوزي": "قوزي", "قوز": "قوزي",
+        "باجه": "باجة", "باشا": "باجة", "باشه": "باجة", "باكر": "باجة",
+        "دولمه": "دولمة", "ضلمة": "دولمة",
+        "تجريب": "تشريب", "تشرب": "تشريب",
+        "سمج": "سمك", "سمچ": "سمك", "مسكف": "مسكوف",
+        "رايزو": "ريزو", "زيزو": "ريزو", "ريسو": "ريزو",
+        "مقبلات": "مشكل",
+        "غنوج": "غنوج", "قنوج": "غنوج",
+        "تبوله": "تبولة",
+        "طرشي": "طرشي", "ترشي": "طرشي",
+        "كبه": "كبة",
+        "بورق": "بورك"
     };
 
-    function renderData(items) {
-        const body = document.getElementById('inventoryBody');
-        body.innerHTML = items.map(item => `
-            <tr>
-                <td>${item.name}</td>
-                <td>${item.qty}</td>
-                <td>${item.price.toLocaleString()} د.ع</td>
-            </tr>
-        `).join('');
-        document.getElementById('resultTable').style.display = 'table';
+    const menuData = [
+        { id: 1, category: "مشويات", name: "كباب شوي", price: 10000, icon: "fa-fire", keys: ["كباب شوي", "كباب"] },
+        { id: 2, category: "مشويات", name: "تكه لحم", price: 12000, icon: "fa-drumstick-bite", keys: ["تكه لحم","تكه"] },
+        { id: 4, category: "مشويات", name: "معلاق", price: 7000, icon: "fa-heart", keys: ["معلاق"] },
+        { id: 6, category: "مشويات", name: "اجنحة", price: 6000, icon: "fa-dove", keys: ["اجنحة"] },
+        { id: 10, category: "سندويشات", name: "بركر لحم", price: 5000, icon: "fa-burger", keys: ["بركر لحم", "برجر لحم", "بركر"] },
+        { id: 12, category: "سندويشات", name: "تشيز بركر", price: 6000, icon: "fa-cheese", keys: ["تشيز"] },
+        { id: 13, category: "سندويشات", name: "كص لحم", price: 5000, icon: "fa-layer-group", keys: ["كص لحم","قص لحم"] },
+        { id: 14, category: "سندويشات", name: "كص دجاج", price: 4000, icon: "fa-layer-group", keys: ["قص دجاج","كص دجاج"] },
+        { id: 15, category: "سندويشات", name: "فلافل", price: 2000, icon: "fa-cookie", keys: ["فلافل"] },
+        { id: 16, category: "سندويشات", name: "كنتاكي", price: 11000, icon: "fa-box-open", keys: ["كنتاكي"] },
+        { id: 17, category: "سندويشات", name: "بيتزا", price: 12000, icon: "fa-pizza-slice", keys: ["بيتزا"] },
+        { id: 18, category: "سندويشات", name: "فنكر", price: 3000, icon: "fa-fries", keys: ["فنجر","فنكر"] },
+        { id: 19, category: "سندويشات", name: "صاج دجاج", price: 4500, icon: "fa-scroll", keys: ["صاج"] },
+        { id: 20, category: "سندويشات", name: "فاهيتا", price: 9000, icon: "fa-pepper-hot", keys: ["فاهيته","فاهيتا"] },
+        { id: 30, category: "رئيسية", name: "قوزي شام", price: 15000, icon: "fa-bowl-rice", keys: ["قوزي"] },
+        { id: 31, category: "رئيسية", name: "برياني", price: 7000, icon: "fa-bowl-rice", keys: ["برياني"] },
+        { id: 32, category: "رئيسية", name: "دولمة", price: 8000, icon: "fa-leaf", keys: ["دولمة"] },
+        { id: 33, category: "رئيسية", name: "سمك مسكوف", price: 25000, icon: "fa-fish", keys: ["سمك", "مسكوف"] },
+        { id: 34, category: "رئيسية", name: "باجة", price: 12000, icon: "fa-skull", keys: ["باجة"] },
+        { id: 35, category: "رئيسية", name: "تشريب", price: 10000, icon: "fa-mug-hot", keys: ["تشريب"] },
+        { id: 36, category: "رئيسية", name: "مندي", price: 12000, icon: "fa-sun", keys: ["مندي"] },
+        { id: 37, category: "رئيسية", name: "ستيك لحم", price: 18000, icon: "fa-bacon", keys: ["ستيك","ستيك لحم"] },
+        { id: 38, category: "رئيسية", name: "ريزو", price: 6500, icon: "fa-bowl-rice", keys: ["ريزو"] },
+        { id: 50, category: "مقبلات", name: "حمص بطحينة", price: 3000, icon: "fa-bowl-food", keys: ["حمص"] },
+        { id: 51, category: "مقبلات", name: "بابا غنوج", price: 3000, icon: "fa-eggplant", keys: ["غنوج"] },
+        { id: 52, category: "مقبلات", name: "تبولة", price: 3500, icon: "fa-leaf", keys: ["تبولة"] },
+        { id: 53, category: "مقبلات", name: "طرشي", price: 1000, icon: "fa-jar", keys: ["طرشي"] },
+        { id: 54, category: "مقبلات", name: "كبة", price: 1000, icon: "fa-circle", keys: ["كبة"] },
+        { id: 55, category: "مقبلات", name: "بورك", price: 1000, icon: "fa-pastry", keys: ["بورك"] },
+        { id: 70, category: "مشروبات", name: "بيبسي", price: 500, icon: "fa-wine-glass", keys: ["بيبسي"] },
+        { id: 71, category: "مشروبات", name: "سفن اب", price: 500, icon: "fa-wine-bottle", keys: ["سفن"] },
+        { id: 72, category: "مشروبات", name: "كولا", price: 500, icon: "fa-bottle-water", keys: ["كوكا"] },
+        { id: 73, category: "مشروبات", name: "لبن", price: 1000, icon: "fa-glass-water", keys: ["لبن"] },
+        { id: 74, category: "مشروبات", name: "بطل ماء", price: 250, icon: "fa-faucet", keys: ["بطل ماء","بطل"] },
+        { id: 75, category: "مشروبات", name: "شاي", price: 500, icon: "fa-mug-hot", keys: ["شاي", "جاي"] }
+    ];
+
+    let basket = []; 
+    let orderId = localStorage.getItem('lastOrderId') ? parseInt(localStorage.getItem('lastOrderId')) : 101; 
+    let isMicActive = true; 
+    let processedTokens = new Set();
+    let reloadTimer = null; 
+    let silenceTimer = null;
+    let orderType = 'صاله';
+
+    const wordToNum = { 
+        "واحد": 1, "وحده": 1, 
+        "اثنين": 2, "ثنين": 2, "طنين": 2, 
+        "ثلاثه": 3, "تلاثه": 3, "ثلاث": 3,
+        "اربعه": 4, "اربع": 4, 
+        "خمسه": 5, "خمس": 5, 
+        "سته": 6, "ست": 6, 
+        "سبعه": 7, "سبع": 7, 
+        "ثمانيه": 8, "ثمان": 8,
+        "تسعه": 9, "تسع": 9, 
+        "عشره": 10 
+    };
+
+    function setOrderType(type) {
+        orderType = type;
+        document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+        if(type === 'صاله') document.getElementById('btn-dinein').classList.add('active');
+        if(type === 'سفري') document.getElementById('btn-takeaway').classList.add('active');
+        if(type === 'توترز') document.getElementById('btn-toters').classList.add('active');
+        if(type === 'طلبات') document.getElementById('btn-talabat').classList.add('active');
+        renderCart(); 
     }
 
-    const toBase64 = file => new Promise((res, rej) => {
-        const r = new FileReader(); r.readAsDataURL(file);
-        r.onload = () => res(r.result); r.onerror = e => rej(e);
-    });
-</script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ar-IQ'; 
+    recognition.continuous = true; 
+    recognition.interimResults = true;
 
+    // تفعيل وضع السرعة القصوى وعدم الخمول
+    recognition.onresult = (e) => {
+        if (!isMicActive) return;
+        clearTimeout(silenceTimer);
+        document.getElementById('v-bar').classList.add('mic-on-active');
+        
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+            let originalTranscript = e.results[i][0].transcript.toLowerCase().trim();
+            let transcript = originalTranscript;
+            
+            // تصحيح فوري سريع
+            for (const [wrong, right] of Object.entries(voiceCorrections)) {
+                if (transcript.includes(wrong)) transcript = transcript.split(wrong).join(right);
+            }
+
+            document.getElementById('live-text').innerText = transcript;
+            
+            if (transcript.includes("سفري")) { setOrderType('سفري'); transcript = transcript.replace("سفري", ""); }
+            if (transcript.includes("صاله") || transcript.includes("محلي")) { setOrderType('صاله'); transcript = transcript.replace(/صاله|محلي/g, ""); }
+            if (transcript.includes("توترز") || transcript.includes("توتيرز")) { setOrderType('توترز'); transcript = transcript.replace(/توترز|توتيرز/g, ""); }
+            if (transcript.includes("طلبات")) { setOrderType('طلبات'); transcript = transcript.replace("طلبات", ""); }
+
+            if (transcript.includes("ملاحظه") || transcript.includes("ملاحظة")) {
+                let parts = transcript.split(/ملاحظه|ملاحظة/);
+                if (parts[1] && parts[1].trim() !== "") document.getElementById('order-notes').value = parts[1].trim();
+                processOrder(parts[0], parts[0]);
+                continue; 
+            }
+
+            processOrder(transcript, originalTranscript);
+            if (e.results[i].isFinal) processedTokens.clear();
+        }
+
+        silenceTimer = setTimeout(() => {
+            document.getElementById('live-text').innerText = "بانتظار صوتك...";
+            processedTokens.clear();
+        }, 800);
+    };
+
+    // منع الخمول: إعادة التشغيل في حالة الخطأ أو التوقف التلقائي
+    recognition.onerror = () => { if(isMicActive) try { recognition.start(); } catch(e) {} };
+    recognition.onend = () => { if (isMicActive) try { recognition.start(); } catch(e) {} };
+
+    function processOrder(text, originalText) {
+        if (!text) return;
+        if (text.includes("مسح") || text.includes("امسح") || text.includes("تصفير")) { clearCart(); return; }
+
+        const words = text.split(/\s+/);
+        if (words.some(w => ["اطبع", "تم", "كم"].includes(w))) {
+            if (basket.length > 0 && !processedTokens.has("DONE")) {
+                printReceipt(); 
+                processedTokens.add("DONE");
+            }
+            return;
+        }
+
+        const isDeleteIntent = ["احذف", "شيل", "الغي", "بطلت"].some(cmd => text.includes(cmd));
+
+        menuData.forEach(item => {
+            const foundKey = item.keys.find(key => text.includes(key));
+            if (foundKey) {
+                const actionType = isDeleteIntent ? "DEL" : "ADD";
+                const tokenKey = item.id + "_" + foundKey + "_" + actionType;
+
+                if (!processedTokens.has(tokenKey)) {
+                    if (isDeleteIntent) {
+                        const idx = basket.findIndex(b => b.id === item.id);
+                        if (idx > -1) {
+                            basket.splice(idx, 1);
+                            processedTokens.add(tokenKey);
+                            renderCart();
+                        }
+                    } else {
+                        let qty = findNumberUniversal(text, originalText, foundKey);
+                        const idx = basket.findIndex(b => b.id === item.id);
+                        if (idx > -1) basket[idx].qty = qty;
+                        else basket.push({ ...item, qty: qty });
+                        processedTokens.add(tokenKey);
+                        renderCart();
+                    }
+                }
+            }
+        });
+    }
+
+    function findNumberUniversal(text, originalText, foundKey) {
+        const fullText = (text + " " + originalText).trim();
+        const words = fullText.split(/\s+/);
+        const keyParts = foundKey.split(/\s+/);
+        
+        for (let i = 0; i < words.length; i++) {
+            let match = true;
+            for(let j=0; j < keyParts.length; j++) { if(words[i+j] !== keyParts[j]) { match = false; break; } }
+            if (match) {
+                let prevWord = words[i-1];
+                if (prevWord) {
+                    if (prevWord.match(/^\d+$/)) return parseInt(prevWord);
+                    if (wordToNum[prevWord]) return wordToNum[prevWord];
+                }
+                let nextWord = words[i + keyParts.length];
+                if (nextWord) {
+                    if (nextWord.match(/^\d+$/)) return parseInt(nextWord);
+                    if (wordToNum[nextWord]) return wordToNum[nextWord];
+                }
+            }
+        }
+        for (let w of words) {
+            if (w.match(/^\d+$/) && parseInt(w) < 50) return parseInt(w);
+            if (wordToNum[w]) return wordToNum[w];
+        }
+        return 1;
+    }
+
+    function renderMenu() {
+        const container = document.getElementById('full-menu-container');
+        const categories = [...new Set(menuData.map(item => item.category))];
+        let html = "";
+        categories.forEach(cat => {
+            const items = menuData.filter(i => i.category === cat);
+            html += `<div class="menu-category"><div class="category-title">${cat}</div><div class="menu-grid">`;
+            items.forEach(item => {
+                html += `<div class="card" data-id="${item.id}" onclick="addToBasket(${item.id})">
+                    <div class="badge" style="display:none">0</div>
+                    <i class="fas ${item.icon}"></i><h3>${item.name}</h3><p>${item.price.toLocaleString()} د.ع</p>
+                </div>`;
+            });
+            html += `</div></div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function addToBasket(id) {
+        const item = menuData.find(m => m.id === id);
+        const exists = basket.find(b => b.id === id);
+        if (exists) exists.qty++; else basket.push({ ...item, qty: 1 });
+        renderCart();
+    }
+
+    function checkBasketForReload() {
+        if (basket.length === 0) {
+            if (!reloadTimer) reloadTimer = setTimeout(() => { if (basket.length === 0) location.reload(); }, 60000); 
+        } else {
+            if (reloadTimer) { clearTimeout(reloadTimer); reloadTimer = null; }
+        }
+    }
+
+    function renderCart() {
+        const listUI = document.getElementById('cart-list-ui');
+        if (basket.length === 0) {
+            listUI.innerHTML = `<div style="text-align:center; color:#999; margin-top:50px;"><i class="fas fa-brain" style="font-size:3rem; margin-bottom:15px; opacity:0.1;"></i><p>القائمة فارغة</p></div>`;
+            document.getElementById('total-price-ui').innerText = "0";
+            document.getElementById('profit-display').style.display = 'none';
+            document.querySelectorAll('.card').forEach(c => { c.classList.remove('active'); c.querySelector('.badge').style.display = 'none'; });
+            checkBasketForReload(); 
+            return;
+        }
+        let total = 0;
+        let html = "";
+        basket.forEach(item => {
+            total += (item.price * item.qty);
+            html += `<div class="item-row">
+                <div><b>${item.name}</b> <span style="font-size:0.8em; color:#666">x${item.qty}</span></div>
+                <div style="color:var(--success); font-weight:bold">${(item.price * item.qty).toLocaleString()}</div>
+            </div>`;
+        });
+        listUI.innerHTML = html;
+        document.getElementById('total-price-ui').innerText = total.toLocaleString() + " د.ع";
+        document.getElementById('profit-display').style.display = 'none';
+
+        document.querySelectorAll('.card').forEach(card => {
+            const itemInBasket = basket.find(b => b.id == card.dataset.id);
+            const badge = card.querySelector('.badge');
+            if (itemInBasket) {
+                card.classList.add('active');
+                badge.innerText = itemInBasket.qty;
+                badge.style.display = "flex";
+            } else {
+                card.classList.remove('active');
+                badge.style.display = "none";
+            }
+        });
+        checkBasketForReload(); 
+    }
+
+    function printReceipt() {
+        if (basket.length === 0) return;
+        const now = new Date();
+        const notes = document.getElementById('order-notes').value;
+        document.getElementById('p-date').innerText = now.toLocaleDateString('ar-IQ');
+        document.getElementById('p-time').innerText = now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('p-order-id').innerText = "#" + orderId;
+        document.getElementById('p-order-type').innerText = orderType;
+        if(notes.trim() !== "") {
+            document.getElementById('p-notes-area').style.display = 'block';
+            document.getElementById('p-notes').innerText = notes;
+        } else { document.getElementById('p-notes-area').style.display = 'none'; }
+
+        let itemsHtml = ""; let total = 0;
+        basket.forEach((item, index) => {
+            let itemTotal = item.price * item.qty;
+            total += itemTotal;
+            itemsHtml += `<tr><td class="col-id">${index + 1}</td><td class="col-name">${item.name}</td><td class="col-qty">${item.qty}</td><td class="col-price">${item.price.toLocaleString()}</td><td class="col-total">${itemTotal.toLocaleString()}</td></tr>`;
+        });
+        document.getElementById('p-items').innerHTML = itemsHtml;
+        document.getElementById('p-total').innerText = total.toLocaleString() + " د.ع";
+        window.print();
+        orderId++;
+        localStorage.setItem('lastOrderId', orderId);
+        setTimeout(() => { clearCart(); location.reload(); }, 1500);
+    }
+
+    function clearCart() { 
+        basket = []; 
+        document.getElementById('order-notes').value = "";
+        setOrderType('صاله');
+        renderCart(); 
+        processedTokens.clear(); 
+    }
+    
+    function toggleMic() {
+        isMicActive = !isMicActive;
+        const btn = document.getElementById('mic-toggle');
+        const vbar = document.getElementById('v-bar');
+        if (isMicActive) {
+            try { recognition.start(); } catch(e) {}
+            btn.className = "btn-action mic-on";
+            btn.innerHTML = '<i class="fas fa-microphone"></i> <span>المايك: مفعل</span>';
+            vbar.style.display = "flex";
+        } else {
+            recognition.stop();
+            btn.className = "btn-action mic-off";
+            btn.innerHTML = '<i class="fas fa-microphone-slash"></i> <span>المايك: متوقف</span>';
+            vbar.classList.remove('mic-on-active');
+        }
+    }
+
+    window.onload = () => { 
+        document.getElementById('order-number-display').innerText = "طلب رقم: #" + orderId;
+        renderMenu(); 
+        checkBasketForReload(); 
+        try { recognition.start(); } catch(e) {} 
+    };
+</script>
 </body>
 </html>
