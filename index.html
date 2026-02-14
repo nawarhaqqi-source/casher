@@ -3,79 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام صيدلية حياة الذكي | GitHub Version</title>
+    <title>نظام صيدلية حياة الذكي | النسخة المستقرة</title>
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #4834d4; --success: #2ecc71; --danger: #eb4d4b; --bg: #f8f9fa; }
         body { font-family: 'Changa', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        
         nav { background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .nav-tabs button { background: none; border: 2px solid transparent; color: white; padding: 8px 15px; cursor: pointer; border-radius: 8px; font-family: 'Changa'; }
-        .nav-tabs button.active { background: white; color: var(--primary); }
-
+        .nav-tabs button { background: none; border: 2px solid transparent; color: white; padding: 8px 15px; cursor: pointer; border-radius: 8px; font-family: 'Changa'; margin-left: 5px; }
+        .nav-tabs button.active { background: white; color: var(--primary); font-weight: bold; }
         main { flex: 1; padding: 20px; overflow-y: auto; }
         .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
-        
-        .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; color: white; }
+        .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); color: white; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; }
         .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--success); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .search-results { background: white; border: 1px solid #ddd; position: absolute; width: 95%; z-index: 100; max-height: 200px; overflow-y: auto; }
-        .search-item { padding: 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-        .search-item:hover { background: #f8faff; }
+        .search-results { background: white; border: 1px solid #ddd; position: absolute; width: 95%; z-index: 100; max-height: 200px; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .search-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
+        .search-item:hover { background: #f0f7ff; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div id="loader" class="loading-overlay">
     <div class="spinner"></div>
-    <h3 style="margin-top: 20px;">Gemini AI يحلل الفاتورة الآن...</h3>
+    <h3 style="margin-top: 20px;">الذكاء الاصطناعي يحلل الفاتورة...</h3>
+    <p>يرجى الانتظار ثواني قليلة</p>
 </div>
 
 <nav>
     <div class="logo"><h2><i class="fas fa-prescription-bottle-alt"></i> مذكر حياة V10</h2></div>
     <div class="nav-tabs">
         <button id="btn-pos" class="active" onclick="showPage('pos')">الكاشير</button>
-        <button id="btn-inv" onclick="showPage('inv')">المخزن</button>
+        <button id="btn-inv" onclick="showPage('inv')">المخزن والتحليل</button>
     </div>
 </nav>
 
 <main>
-    <div id="page-pos" class="page">
+    <div id="page-pos">
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
             <div class="card">
-                <h3>نقطة البيع</h3>
+                <h3><i class="fas fa-shopping-cart"></i> واجهة البيع</h3>
                 <div style="position:relative">
-                    <input type="text" id="pos-search" oninput="searchStock()" placeholder="ابحث عن دواء..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; font-family:'Changa'">
+                    <input type="text" id="pos-search" oninput="searchStock()" placeholder="ابحث عن دواء..." style="width:100%; padding:12px; border-radius:10px; border:2px solid #eee; font-family:'Changa'; outline:none;">
                     <div id="search-results" class="search-results"></div>
                 </div>
                 <table>
-                    <thead><tr><th>المادة</th><th>السعر</th><th>الكمية</th><th>حذف</th></tr></thead>
+                    <thead><tr><th>المادة</th><th>السعر</th><th>الكمية</th><th>المجموع</th><th></th></tr></thead>
                     <tbody id="cart-body"></tbody>
                 </table>
             </div>
             <div class="card" style="text-align:center; background:var(--primary); color:white;">
-                <h3>الإجمالي</h3>
-                <h1 id="cart-total">0</h1>
-                <button onclick="checkout()" style="width:100%; padding:15px; border-radius:8px; border:none; background:var(--success); color:white; font-weight:bold; cursor:pointer">إتمام العملية</button>
+                <h3>المجموع الكلي</h3>
+                <h1 id="cart-total" style="font-size: 3rem; margin: 10px 0;">0</h1>
+                <p>دينار عراقي</p>
+                <button onclick="checkout()" style="width:100%; padding:15px; border-radius:10px; border:none; background:var(--success); color:white; font-weight:bold; cursor:pointer; font-size: 1.1rem; margin-top: 10px;">
+                    <i class="fas fa-check-circle"></i> إتمام البيع
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="page-inv" class="page" style="display:none">
-        <div class="card" style="text-align:center; border: 2px dashed var(--primary)">
-            <h3>رفع فاتورة المذخر للتحليل</h3>
+    <div id="page-inv" style="display:none">
+        <div class="card" style="text-align:center; border: 2px dashed var(--primary); background: #f8faff;">
+            <h3><i class="fas fa-upload"></i> تحليل فاتورة المذخر</h3>
             <input type="file" id="file-input" accept="image/*" onchange="uploadInvoice(this)" style="display:none">
-            <button onclick="document.getElementById('file-input').click()" style="padding:15px 30px; background:var(--primary); color:white; border:none; border-radius:8px; cursor:pointer">
-                <i class="fas fa-camera"></i> اختر صورة الفاتورة
+            <button onclick="document.getElementById('file-input').click()" style="padding:15px 30px; background:var(--primary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">
+                <i class="fas fa-camera"></i> ارفع صورة الفاتورة
             </button>
+            <p style="color: #666; font-size: 0.9rem; margin-top: 10px;">سيقوم Gemini 1.5 Flash باستخراج البيانات تلقائياً</p>
         </div>
         <div class="card">
-            <h3>جرد المخزن</h3>
+            <h3>جرد المخزن الحالي</h3>
             <table>
                 <thead><tr><th>اسم الدواء</th><th>الكمية</th><th>السعر</th><th>إجراء</th></tr></thead>
                 <tbody id="inventory-body"></tbody>
@@ -84,16 +84,23 @@
     </div>
 </main>
 
+<script type="importmap">
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+      }
+    }
+</script>
+
 <script type="module">
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+    import { GoogleGenerativeAI } from "@google/generative-ai";
 
     const API_KEY = "AIzaSyCZ7lb3L4WUXTTUCUUS4t5hpjvuu8TR7Fk";
     const genAI = new GoogleGenerativeAI(API_KEY);
 
-    let stock = JSON.parse(localStorage.getItem('pharmacy_github')) || [];
+    let stock = JSON.parse(localStorage.getItem('pharmacy_pro_data')) || [];
     let cart = [];
 
-    // تنقل الصفحات
     window.showPage = (id) => {
         document.getElementById('page-pos').style.display = id === 'pos' ? 'block' : 'none';
         document.getElementById('page-inv').style.display = id === 'inv' ? 'block' : 'none';
@@ -102,7 +109,6 @@
         if(id === 'inv') renderInventory();
     };
 
-    // تحليل الفاتورة
     window.uploadInvoice = async (input) => {
         const file = input.files[0];
         if(!file) return;
@@ -110,26 +116,49 @@
 
         try {
             const base64 = await toBase64(file);
+            // تحديد الموديل مع رابط صريح
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            const prompt = "Extract items from invoice. Return JSON array ONLY: [{\"name\":\"string\",\"qty\":number,\"price\":number}].";
+            
+            const prompt = `
+                Analyze this pharmacy invoice. 
+                Extract medicine names, quantities, and unit prices.
+                Return ONLY a JSON array in this format:
+                [{"name": "medicine name", "qty": 5, "price": 1000}]
+                Do not include any words before or after the JSON.
+            `;
             
             const result = await model.generateContent([
-                prompt, { inlineData: { data: base64.split(',')[1], mimeType: file.type } }
+                prompt, 
+                { inlineData: { data: base64.split(',')[1], mimeType: file.type } }
             ]);
 
-            const text = await result.response.text();
-            const cleanJson = text.substring(text.indexOf('['), text.lastIndexOf(']') + 1);
+            const response = await result.response;
+            const text = response.text();
+            
+            // استخراج JSON بطريقة آمنة
+            const start = text.indexOf('[');
+            const end = text.lastIndexOf(']') + 1;
+            const cleanJson = text.substring(start, end);
             const data = JSON.parse(cleanJson);
 
             data.forEach(item => {
-                const found = stock.find(s => s.name === item.name);
-                if(found) found.qty += item.qty; else stock.push(item);
+                const found = stock.find(s => s.name.toLowerCase() === item.name.toLowerCase());
+                if(found) {
+                    found.qty += parseInt(item.qty);
+                } else {
+                    stock.push({
+                        name: item.name,
+                        qty: parseInt(item.qty) || 0,
+                        price: parseInt(item.price) || 0
+                    });
+                }
             });
 
-            saveAndRender();
-            alert("تم التحليل والإضافة!");
+            saveData();
+            alert("تم تحليل " + data.length + " أصناف وإضافتها للمخزن.");
         } catch (e) {
-            alert("فشل التحليل: " + e.message);
+            console.error(e);
+            alert("خطأ في التحليل: تأكد من وضوح الصورة ومن صلاحية مفتاح الـ API.");
         } finally {
             document.getElementById('loader').style.display = 'none';
         }
@@ -138,14 +167,26 @@
     window.searchStock = () => {
         const term = document.getElementById('pos-search').value.toLowerCase();
         const res = term ? stock.filter(s => s.name.toLowerCase().includes(term)) : [];
-        document.getElementById('search-results').innerHTML = res.map(p => `
-            <div class="search-item" onclick="addToCart('${p.name}')">${p.name} - ${p.price} د.ع (متوفر: ${p.qty})</div>
+        const container = document.getElementById('search-results');
+        
+        container.innerHTML = res.map(p => `
+            <div class="search-item" onclick="addToCart('${p.name}')">
+                <span><strong>${p.name}</strong></span>
+                <span>${p.price.toLocaleString()} د.ع (متوفر: ${p.qty})</span>
+            </div>
         `).join('');
     };
 
     window.addToCart = (name) => {
         const prod = stock.find(s => s.name === name);
-        cart.push({...prod, qty: 1});
+        if(!prod || prod.qty <= 0) return alert("هذا الصنف غير متوفر ككمية!");
+        
+        const inCart = cart.find(c => c.name === name);
+        if(inCart) {
+            if(inCart.qty < prod.qty) inCart.qty++;
+        } else {
+            cart.push({...prod, qty: 1});
+        }
         renderCart();
         document.getElementById('search-results').innerHTML = '';
         document.getElementById('pos-search').value = '';
@@ -154,31 +195,54 @@
     function renderCart() {
         let total = 0;
         document.getElementById('cart-body').innerHTML = cart.map((c, i) => {
-            total += c.price;
-            return `<tr><td>${c.name}</td><td>${c.price}</td><td>1</td><td onclick="removeFromCart(${i})"><i class="fas fa-trash" style="color:red"></i></td></tr>`;
+            total += c.price * c.qty;
+            return `<tr>
+                <td>${c.name}</td>
+                <td>${c.price.toLocaleString()}</td>
+                <td>${c.qty}</td>
+                <td>${(c.price * c.qty).toLocaleString()}</td>
+                <td onclick="removeFromCart(${i})"><i class="fas fa-times-circle" style="color:red; cursor:pointer"></i></td>
+            </tr>`;
         }).join('');
-        document.getElementById('cart-total').innerText = total + " د.ع";
+        document.getElementById('cart-total').innerText = total.toLocaleString();
     }
 
     window.removeFromCart = (i) => { cart.splice(i,1); renderCart(); };
 
     window.checkout = () => {
-        cart.forEach(c => { const s = stock.find(si => si.name === c.name); if(s) s.qty -= 1; });
-        cart = []; saveAndRender(); renderCart(); alert("تمت البيع!");
+        if(cart.length === 0) return;
+        cart.forEach(c => {
+            const s = stock.find(si => si.name === c.name);
+            if(s) s.qty -= c.qty;
+        });
+        cart = [];
+        saveData();
+        renderCart();
+        alert("تمت عملية البيع بنجاح وتحديث المخزن.");
     };
 
-    function saveAndRender() {
-        localStorage.setItem('pharmacy_github', JSON.stringify(stock));
+    function saveData() {
+        localStorage.setItem('pharmacy_pro_data', JSON.stringify(stock));
         renderInventory();
     }
 
     function renderInventory() {
         document.getElementById('inventory-body').innerHTML = stock.map((s, i) => `
-            <tr><td>${s.name}</td><td>${s.qty}</td><td>${s.price}</td><td onclick="deleteStock(${i})"><i class="fas fa-trash"></i></td></tr>
-        `).join('');
+            <tr>
+                <td>${s.name}</td>
+                <td><strong style="color:${s.qty < 5 ? 'red' : 'green'}">${s.qty}</strong></td>
+                <td>${s.price.toLocaleString()}</td>
+                <td><button onclick="deleteStock(${i})" style="border:none; background:none; color:red; cursor:pointer"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        `).reverse().join('');
     }
 
-    window.deleteStock = (i) => { stock.splice(i,1); saveAndRender(); };
+    window.deleteStock = (i) => {
+        if(confirm('هل أنت متأكد من حذف هذا الصنف نهائياً؟')) {
+            stock.splice(stock.length - 1 - i, 1);
+            saveData();
+        }
+    };
 
     const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
