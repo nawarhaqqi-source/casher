@@ -2,198 +2,99 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام صيدلية حياة الذكي</title>
+    <title>نظام صيدلية حياة - إصدار Gemini 2.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #4834d4; --success: #2ecc71; --danger: #eb4d4b; --bg: #f4f7f6; }
-        body { font-family: 'Changa', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        nav { background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .nav-tabs button { background: none; border: none; color: white; padding: 10px 20px; cursor: pointer; border-radius: 8px; font-family: 'Changa'; }
-        .nav-tabs button.active { background: white; color: var(--primary); font-weight: bold; }
-        main { flex: 1; padding: 20px; overflow-y: auto; }
-        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
-        .loading { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; color: white; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #fff; border-top-color: var(--success); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .btn { padding: 12px 25px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-family: 'Changa'; transition: 0.3s; }
-        .btn-success { background: var(--success); color: white; width: 100%; }
-        .search-results { position: absolute; width: 95%; background: white; border: 1px solid #ddd; z-index: 100; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .search-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
-        .search-item:hover { background: #f0f7ff; }
+        :root { --primary: #4834d4; --success: #2ecc71; --bg: #f4f7f6; }
+        body { font-family: 'Changa', sans-serif; background: var(--bg); margin: 0; text-align: center; }
+        .container { padding: 40px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: inline-block; min-width: 350px; }
+        .btn { background: var(--primary); color: white; padding: 15px 30px; border: none; border-radius: 10px; cursor: pointer; font-size: 1.1rem; font-family: 'Changa'; }
+        #loader { display: none; margin-top: 20px; color: var(--primary); font-weight: bold; }
+        table { width: 100%; margin-top: 30px; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: center; }
+        th { background: var(--primary); color: white; }
     </style>
 </head>
 <body>
 
-<div id="loader" class="loading">
-    <div class="spinner"></div>
-    <h2 style="margin-top:20px">الذكاء الاصطناعي يحلل الفاتورة...</h2>
-    <p>يرجى الانتظار، جاري استخراج البيانات بدقة.</p>
+<div class="container">
+    <div class="card">
+        <h2><i class="fas fa-robot"></i> صيدلية حياة - تحليل ذكي</h2>
+        <p>ارفع فاتورة المذخر ليقوم <b>Gemini 2.0 Flash</b> بمعالجتها</p>
+        <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="analyzeInvoice(this)">
+        <button class="btn" onclick="document.getElementById('imageInput').click()">اختر صورة الفاتورة</button>
+        <div id="loader">⏳ جاري التحليل باستخدام Gemini 2.0...</div>
+    </div>
+
+    <table id="resultTable" style="display:none">
+        <thead>
+            <tr><th>اسم الدواء</th><th>الكمية</th><th>السعر</th></tr>
+        </thead>
+        <tbody id="inventoryBody"></tbody>
+    </table>
 </div>
-
-<nav>
-    <div class="logo"><h2><i class="fas fa-hand-holding-medical"></i> مذكر حياة V10</h2></div>
-    <div class="nav-tabs">
-        <button id="tab-pos" class="active" onclick="switchPage('pos')">الكاشير</button>
-        <button id="tab-inv" onclick="switchPage('inv')">المخزن</button>
-    </div>
-</nav>
-
-<main>
-    <div id="page-pos">
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
-            <div class="card">
-                <h3><i class="fas fa-search"></i> عملية بيع جديدة</h3>
-                <div style="position:relative">
-                    <input type="text" id="posSearch" oninput="doSearch()" placeholder="ابحث عن اسم الدواء هنا..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; font-family:'Changa';">
-                    <div id="resultsBox" class="search-results" style="display:none"></div>
-                </div>
-                <table>
-                    <thead><tr><th>الدواء</th><th>السعر</th><th>الكمية</th><th>حذف</th></tr></thead>
-                    <tbody id="cartTable"></tbody>
-                </table>
-            </div>
-            <div class="card" style="text-align:center; background: var(--primary); color:white;">
-                <h3>الإجمالي</h3>
-                <h1 id="totalPrice" style="font-size: 3rem;">0</h1>
-                <p>دينار عراقي</p>
-                <button class="btn btn-success" onclick="confirmSale()">إتمام العملية</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-inv" style="display:none">
-        <div class="card" style="text-align:center; border: 2px dashed var(--primary); background: #f8faff;">
-            <h3>تحميل فاتورة المذخر</h3>
-            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="processInvoice(this)">
-            <button class="btn" onclick="document.getElementById('fileInput').click()" style="background:var(--primary); color:white;">
-                <i class="fas fa-camera"></i> اختر صورة واضحة للفاتورة
-            </button>
-        </div>
-        <div class="card">
-            <h3>جرد المخزن</h3>
-            <table>
-                <thead><tr><th>الدواء</th><th>الكمية</th><th>السعر</th><th>إجراء</th></tr></thead>
-                <tbody id="stockTable"></tbody>
-            </table>
-        </div>
-    </div>
-</main>
 
 <script type="module">
     import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
+    // مفتاحك الذي قمت بتجربته بنجاح
     const API_KEY = "AIzaSyCZ7lb3L4WUXTTUCUUS4t5hpjvuu8TR7Fk";
     const genAI = new GoogleGenerativeAI(API_KEY);
 
-    let stock = JSON.parse(localStorage.getItem('pharmacy_db')) || [];
-    let cart = [];
-
-    window.switchPage = (p) => {
-        document.getElementById('page-pos').style.display = p === 'pos' ? 'block' : 'none';
-        document.getElementById('page-inv').style.display = p === 'inv' ? 'block' : 'none';
-        document.getElementById('tab-pos').className = p === 'pos' ? 'active' : '';
-        document.getElementById('tab-inv').className = p === 'inv' ? 'active' : '';
-        if(p === 'inv') renderStock();
-    };
-
-    window.processInvoice = async (input) => {
+    window.analyzeInvoice = async (input) => {
         const file = input.files[0];
-        if(!file) return;
-        document.getElementById('loader').style.display = 'flex';
+        if (!file) return;
+
+        document.getElementById('loader').style.display = 'block';
+        document.getElementById('resultTable').style.display = 'none';
 
         try {
             const base64 = await toBase64(file);
-            // استخدام الموديل Flash المستقر
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
             
-            const prompt = "Extract medicine details from this invoice image. Respond ONLY with a JSON array: [{\"name\":\"string\",\"qty\":number,\"price\":number}]. No extra text.";
-            
+            // استدعاء موديل 2.0 فلاش كما في الـ Curl الخاص بك
+            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+            const prompt = "Extract medicines from this invoice. Return ONLY a JSON array of objects: [{\"name\":\"string\", \"qty\":number, \"price\":number}]. No conversational text.";
+
             const result = await model.generateContent([
                 { inlineData: { data: base64.split(',')[1], mimeType: file.type } },
-                prompt
+                { text: prompt }
             ]);
 
             const response = await result.response;
             const text = response.text();
             
-            // استخراج المصفوفة حتى لو كتب Gemini مقدمة نصية
-            const data = JSON.parse(text.substring(text.indexOf('['), text.lastIndexOf(']') + 1));
+            // استخراج الـ JSON وتنظيفه
+            const jsonStr = text.substring(text.indexOf('['), text.lastIndexOf(']') + 1);
+            const data = JSON.parse(jsonStr);
 
-            data.forEach(item => {
-                const exist = stock.find(s => s.name.toLowerCase() === item.name.toLowerCase());
-                if(exist) exist.qty += item.qty; else stock.push(item);
-            });
-
-            saveAndRender();
-            alert("تم تحليل " + data.length + " أصناف بنجاح!");
-        } catch (e) {
-            console.error(e);
-            alert("فشل التحليل: يرجى التحقق من اتصال الإنترنت ومن صورة الفاتورة.");
+            renderData(data);
+        } catch (error) {
+            console.error(error);
+            alert("حدث خطأ أثناء التحليل. تأكد من وضوح الصورة.");
         } finally {
             document.getElementById('loader').style.display = 'none';
         }
     };
 
-    window.doSearch = () => {
-        const val = document.getElementById('posSearch').value.toLowerCase();
-        const matches = val ? stock.filter(s => s.name.toLowerCase().includes(val)) : [];
-        const box = document.getElementById('resultsBox');
-        box.style.display = matches.length ? 'block' : 'none';
-        box.innerHTML = matches.map(m => `
-            <div class="search-item" onclick="addToCart('${m.name}')">
-                <span>${m.name}</span>
-                <b>${m.price.toLocaleString()} د.ع</b>
-            </div>
+    function renderData(items) {
+        const body = document.getElementById('inventoryBody');
+        body.innerHTML = items.map(item => `
+            <tr>
+                <td>${item.name}</td>
+                <td>${item.qty}</td>
+                <td>${item.price.toLocaleString()} د.ع</td>
+            </tr>
         `).join('');
-    };
-
-    window.addToCart = (name) => {
-        const p = stock.find(s => s.name === name);
-        if(p.qty <= 0) return alert("الكمية نافذة!");
-        const inCart = cart.find(c => c.name === name);
-        if(inCart) inCart.qty++; else cart.push({...p, qty: 1});
-        renderCart();
-        document.getElementById('resultsBox').style.display = 'none';
-        document.getElementById('posSearch').value = '';
-    };
-
-    function renderCart() {
-        let total = 0;
-        document.getElementById('cartTable').innerHTML = cart.map((c, i) => {
-            total += c.price * c.qty;
-            return `<tr><td>${c.name}</td><td>${c.price}</td><td>${c.qty}</td><td onclick="cart.splice(${i},1);renderCart()"><i class="fas fa-trash" style="color:red"></i></td></tr>`;
-        }).join('');
-        document.getElementById('totalPrice').innerText = total.toLocaleString();
+        document.getElementById('resultTable').style.display = 'table';
     }
-
-    window.confirmSale = () => {
-        cart.forEach(c => { const s = stock.find(si => si.name === c.name); if(s) s.qty -= c.qty; });
-        cart = []; renderCart(); saveAndRender(); alert("تمت البيع بنجاح!");
-    };
-
-    function saveAndRender() {
-        localStorage.setItem('pharmacy_db', JSON.stringify(stock));
-        renderStock();
-    }
-
-    function renderStock() {
-        document.getElementById('stockTable').innerHTML = stock.map((s, i) => `
-            <tr><td>${s.name}</td><td>${s.qty}</td><td>${s.price.toLocaleString()}</td><td onclick="deleteStock(${i})"><i class="fas fa-times-circle" style="color:red"></i></td></tr>
-        `).reverse().join('');
-    }
-
-    window.deleteStock = (i) => { stock.splice(stock.length - 1 - i, 1); saveAndRender(); };
 
     const toBase64 = file => new Promise((res, rej) => {
         const r = new FileReader(); r.readAsDataURL(file);
         r.onload = () => res(r.result); r.onerror = e => rej(e);
     });
-
-    window.onload = renderStock;
 </script>
+
 </body>
 </html>
