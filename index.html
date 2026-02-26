@@ -186,7 +186,7 @@
 
     setInterval(function() {
         idleSecondsCounter++;
-        let currentLimit = (basket.length === 0) ? 25 : 180;
+        let currentLimit = (basket.length === 0) ? 50 : 180;
         if (idleSecondsCounter >= currentLimit) {
             if (typeof recognition !== 'undefined') {
                 recognition.stop();
@@ -595,4 +595,5 @@ if (transcript.includes("ملاحظه") || transcript.includes("ملاحظة") |
 </script>
 
 </body>
+
 </html>
